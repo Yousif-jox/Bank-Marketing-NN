@@ -169,7 +169,42 @@ F1-score balances precision and recall, helping assess how effectively the model
 
 ---
 
-## 8. Team Members and Responsibilities
+## 8. Week 10: EDA, Preprocessing, and Baselines
+
+Week 10 is complete. The hotel EDA is available in `notebooks/01_eda.ipynb` and includes data-quality checks, class-balance analysis, distributions, IQR outlier flags, correlations, cancellation-rate comparisons, and a feature-availability audit.
+
+### Leakage-Free Preprocessing
+
+`src/data.py` implements the reusable data workflow:
+
+- Separates `is_canceled` from model features.
+- Always excludes `reservation_status` and `reservation_status_date`.
+- Conservatively excludes `assigned_room_type`, `booking_changes`, `days_in_waiting_list`, `required_car_parking_spaces`, and `total_of_special_requests` for a booking-creation prediction setting.
+- Imputes numerical features with the training-set median, then standardizes them.
+- Imputes categorical features with `__MISSING__` and one-hot encodes them with unknown-category protection.
+- Treats `agent` and `company` as categorical identifiers rather than continuous values.
+- Creates stratified 70% / 15% / 15% train, validation, and test splits. The test set is not used for model selection.
+
+### Validation Baselines
+
+Both models were fitted on the training split and evaluated on the same validation split (17,908 rows; 6,633 canceled bookings). F1-score for `is_canceled = 1` is the primary metric.
+
+| Model | Accuracy | Precision | Recall | F1 (canceled) | Macro F1 | ROC-AUC |
+|---|---:|---:|---:|---:|---:|---:|
+| Majority class (`DummyClassifier`) | 0.6296 | 0.0000 | 0.0000 | 0.0000 | 0.3864 | 0.5000 |
+| Logistic Regression (`class_weight="balanced"`) | 0.7911 | 0.7030 | 0.7550 | 0.7281 | 0.7792 | 0.8814 |
+
+Logistic Regression substantially improves on the majority baseline for the canceled class. Full classification reports and confusion matrices are saved in `experiments/baseline_report.md`; machine-readable results are in `experiments/baseline_results.csv` and `experiments/baseline_details.json`.
+
+### Reproduction
+
+1. Download the Kaggle CSV to `data/raw/hotel_bookings.csv` as described in `data/README.md`.
+2. Install dependencies with `pip install -r requirements.txt`.
+3. Run `python -m src.baselines --data data/raw/hotel_bookings.csv --output-dir experiments`.
+
+---
+
+## 9. Team Members and Responsibilities
 
 | No. | Team Member | Role | Main Responsibilities |
 |---|---|---|---|
@@ -183,10 +218,10 @@ All team members will contribute to neural-network experimentation, documentatio
 
 ---
 
-## 9. Project Structure
+## 10. Project Structure
 
 ```text
-Bank-Marketing-NN/
+Hotel-Booking-Cancellation-NN/
 ├── README.md
 ├── requirements.txt
 ├── app/
@@ -194,16 +229,22 @@ Bank-Marketing-NN/
 ├── data/
 │   └── README.md
 ├── experiments/
+│   ├── baseline_results.csv
+│   ├── baseline_details.json
+│   └── baseline_report.md
 ├── models/
 ├── notebooks/
-│   └── 01_eda.ipynb.ipynb
+│   ├── 01_eda.ipynb
+│   └── 01_eda.ipynb.ipynb  # preserved Bank Marketing EDA
 ├── report/
 └── src/
+    ├── data.py
+    └── baselines.py
 ```
 
 ---
 
-## 10. Expected Outcomes
+## 11. Expected Outcomes
 
 - Develop multiple neural-network models for hotel-booking cancellation prediction.
 - Compare neural networks with traditional baseline models.
@@ -213,7 +254,7 @@ Bank-Marketing-NN/
 
 ---
 
-## 11. References
+## 12. References
 
 1. [Hotel Booking Demand dataset on Kaggle](https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand/data)
 2. Antonio, N., de Almeida, A., & Nunes, L. (2019). Hotel booking demand datasets. *Data in Brief, 22*, 41–49.
@@ -222,9 +263,9 @@ Bank-Marketing-NN/
 
 ---
 
-## 12. Project Status
+## 13. Project Status
 
-**Current Phase:** Project setup and planning
+**Current Phase:** Week 10 - Baselines Ready
 
 Completed activities:
 
@@ -233,12 +274,12 @@ Completed activities:
 - [x] Problem statement defined.
 - [x] Team roles assigned.
 - [x] GitHub repository created.
+- [x] Hotel booking EDA completed.
+- [x] Leakage-free preprocessing pipeline implemented.
+- [x] Majority-class and Logistic Regression baselines evaluated on validation data.
 
 Upcoming activities:
 
-- [ ] Exploratory data analysis.
-- [ ] Data preprocessing.
-- [ ] Baseline-model implementation.
 - [ ] Neural-network development.
 - [ ] Model experimentation and evaluation.
 - [ ] Final report and presentation.

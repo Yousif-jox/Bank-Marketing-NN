@@ -1,0 +1,107 @@
+{
+  "data_path": "data/raw/hotel_bookings.csv",
+  "target": "is_canceled",
+  "evaluation_split": "validation",
+  "test_set_used_for_model_selection": false,
+  "excluded_columns": [
+    "reservation_status",
+    "reservation_status_date",
+    "assigned_room_type",
+    "booking_changes",
+    "days_in_waiting_list",
+    "required_car_parking_spaces",
+    "total_of_special_requests"
+  ],
+  "split_distribution": [
+    {
+      "split": "train",
+      "rows": 83573,
+      "canceled_count": 30957,
+      "canceled_rate": 0.3704186758881457
+    },
+    {
+      "split": "validation",
+      "rows": 17908,
+      "canceled_count": 6633,
+      "canceled_rate": 0.3703931203931204
+    },
+    {
+      "split": "test",
+      "rows": 17909,
+      "canceled_count": 6634,
+      "canceled_rate": 0.37042827628566644
+    }
+  ],
+  "models": {
+    "dummy_most_frequent": {
+      "confusion_matrix": {
+        "true_negatives": 11275,
+        "false_positives": 0,
+        "false_negatives": 6633,
+        "true_positives": 0
+      },
+      "classification_report": {
+        "0": {
+          "precision": 0.6296068796068796,
+          "recall": 1.0,
+          "f1-score": 0.7727101394647569,
+          "support": 11275.0
+        },
+        "1": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 6633.0
+        },
+        "accuracy": 0.6296068796068796,
+        "macro avg": {
+          "precision": 0.3148034398034398,
+          "recall": 0.5,
+          "f1-score": 0.38635506973237843,
+          "support": 17908.0
+        },
+        "weighted avg": {
+          "precision": 0.39640482284831174,
+          "recall": 0.6296068796068796,
+          "f1-score": 0.48650361974900236,
+          "support": 17908.0
+        }
+      }
+    },
+    "logistic_regression_balanced": {
+      "confusion_matrix": {
+        "true_negatives": 9159,
+        "false_positives": 2116,
+        "false_negatives": 1625,
+        "true_positives": 5008
+      },
+      "classification_report": {
+        "0": {
+          "precision": 0.8493137982195845,
+          "recall": 0.8123281596452329,
+          "f1-score": 0.8304093567251462,
+          "support": 11275.0
+        },
+        "1": {
+          "precision": 0.7029758562605278,
+          "recall": 0.7550128147143073,
+          "f1-score": 0.728065712001163,
+          "support": 6633.0
+        },
+        "accuracy": 0.7910989501898593,
+        "macro avg": {
+          "precision": 0.7761448272400562,
+          "recall": 0.7836704871797701,
+          "f1-score": 0.7792375343631546,
+          "support": 17908.0
+        },
+        "weighted avg": {
+          "precision": 0.7951112312654621,
+          "recall": 0.7910989501898593,
+          "f1-score": 0.7925019748034252,
+          "support": 17908.0
+        }
+      }
+    }
+  }
+}

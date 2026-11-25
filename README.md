@@ -1,6 +1,7 @@
-# Bank Marketing Subscription Prediction Using Neural Networks
+# Hotel Booking Cancellation Prediction Using Neural Networks
 
 ## AIE231 – Neural Networks Project
+
 **Alamein International University (AIU)**  
 **Faculty of Computer Science and Engineering**
 
@@ -8,96 +9,81 @@
 
 ## 1. Project Overview
 
-This project aims to develop and evaluate Neural Network models to predict whether a bank customer will subscribe to a term deposit as a result of a direct marketing campaign.
+This project develops and evaluates neural-network models to predict whether a hotel reservation will be canceled before the guest arrives. Accurate cancellation predictions can help hotels improve inventory planning, reduce revenue loss, and make more informed operational decisions.
 
-Banks often use direct marketing campaigns, such as phone calls, to promote their financial products. However, contacting every customer can be costly and inefficient.
-
-By using machine learning and neural networks, this project attempts to identify customers who are more likely to subscribe, helping banks improve their marketing strategies and reduce unnecessary campaign costs.
-
-The project uses the **Bank Marketing Dataset** from the UCI Machine Learning Repository and focuses on binary classification.
+The project uses the [Hotel Booking Demand dataset](https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand/data) and frames the task as a binary-classification problem.
 
 ---
 
 ## 2. Problem Statement
 
-Banks use marketing campaigns to encourage customers to subscribe to term deposits. However, contacting every customer can be costly and inefficient.
+Hotel cancellations create uncertainty in room availability, staffing, and revenue management. The goal is to build a model that estimates the likelihood that a booking will be canceled using reservation, guest, and booking-history information available before the booking outcome is known.
 
-The main objective of this project is to develop a Neural Network model that predicts whether a customer will subscribe to a term deposit based on demographic information, financial details, and previous marketing campaign interactions.
+The target variable is `is_canceled`:
 
-The problem is a binary classification task, where the model predicts one of two classes:
+| Value | Meaning |
+|---|---|
+| `0` | The booking was not canceled. |
+| `1` | The booking was canceled. |
 
-- **Yes:** The customer subscribed to a term deposit.
-- **No:** The customer did not subscribe to a term deposit.
-
-These predictions can help banks improve their marketing strategies, reduce unnecessary campaign costs, and focus their efforts on customers who are more likely to subscribe.
-
-Incorrect predictions may lead to wasted marketing resources or missed business opportunities.
+This is a binary-classification task. The model’s predictions can support targeted retention actions and more reliable room-demand planning.
 
 ---
 
 ## 3. Dataset Description
 
-**Dataset Name:** Bank Marketing Dataset  
-**Source:** UCI Machine Learning Repository  
-**Dataset Link:** https://archive.ics.uci.edu/dataset/222/bank+marketing
+**Dataset Name:** Hotel Booking Demand
+
+**Source:** Kaggle
+
+**Dataset Link:** https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand/data
+
+The dataset contains hotel-booking records for resort and city hotels. It combines numerical and categorical information about guests, reservation timing, stay characteristics, market segments, and previous cancellations.
 
 ### Dataset Information
 
-- Number of records: 45,211
-- Number of input features: 16
-- Target variable: `y`
-- Target classes: `yes` and `no`
-- Problem type: Binary Classification
-- Data types: Numerical and Categorical
-
-### Target Variable
-
-The target variable is `y`, which indicates whether a customer subscribed to a term deposit.
-
-| Value | Meaning |
-|---|---|
-| yes | Customer subscribed |
-| no | Customer did not subscribe |
-
-### Dataset Challenges
-
-The dataset includes several challenges that will be considered during preprocessing and model development:
-
-- Imbalanced target classes.
-- Numerical and categorical features.
-- Unknown values in some categorical attributes.
-- Different feature scales.
-- Potential data leakage if certain features are used incorrectly.
+- Number of records: 119,390
+- Target variable: `is_canceled`
+- Problem type: Binary classification
+- Data types: Numerical and categorical
+- Hotel types: Resort hotel and city hotel
 
 ### Data Leakage Consideration
 
-The `duration` feature represents the duration of the last contact with the customer.
+To ensure predictions use only information available before the booking outcome, the following columns will be excluded from modeling:
 
-Since our goal is to predict customer subscription before the marketing call takes place, this feature will be excluded from the main prediction pipeline because it is not available at prediction time.
+- `reservation_status`
+- `reservation_status_date`
+
+Both fields reveal information about the final reservation outcome and would cause target leakage.
+
+### Dataset Challenges
+
+- Class imbalance between canceled and non-canceled bookings.
+- Missing values in selected guest and agent/company fields.
+- Mixed numerical and categorical features.
+- Categorical values with many unique levels.
+- Different numerical feature scales.
+- Potential leakage from outcome-related columns.
 
 ---
 
 ## 4. Project Objectives
 
-The main objectives of this project are:
-
-1. Understand and analyze the Bank Marketing Dataset.
-2. Perform Exploratory Data Analysis (EDA).
-3. Clean and preprocess the dataset.
-4. Handle categorical and numerical features.
+1. Understand and analyze the Hotel Booking Demand dataset.
+2. Perform exploratory data analysis (EDA).
+3. Clean and preprocess numerical and categorical features.
+4. Exclude leakage-prone reservation-status fields.
 5. Build simple baseline classification models.
-6. Develop different Neural Network architectures using TensorFlow/Keras.
-7. Compare different optimizers and hyperparameters.
-8. Apply regularization techniques to reduce overfitting.
-9. Evaluate and compare model performance.
-10. Analyze incorrect predictions and model limitations.
-11. Develop a simple inference pipeline for making new predictions.
+6. Develop and compare neural-network architectures using TensorFlow/Keras.
+7. Experiment with optimizers, regularization, and hyperparameters.
+8. Evaluate models with metrics appropriate for cancellation prediction.
+9. Analyze incorrect predictions and model limitations.
+10. Deliver a reproducible inference pipeline for new booking records.
 
 ---
 
 ## 5. Technologies and Tools
-
-The project will use the following technologies:
 
 | Technology | Purpose |
 |---|---|
@@ -108,180 +94,197 @@ The project will use the following technologies:
 | Matplotlib | Data visualization |
 | Seaborn | Statistical visualization |
 | Scikit-learn | Preprocessing and baseline models |
-| TensorFlow / Keras | Neural Network development |
+| TensorFlow / Keras | Neural-network development |
 | Git & GitHub | Version control and collaboration |
 
 ---
 
 ## 6. Methodology
 
-The project will follow these main stages:
+### Stage 1: Exploratory Data Analysis
 
-### Stage 1: Exploratory Data Analysis (EDA)
-
-- Inspect dataset structure and dimensions.
-- Analyze numerical and categorical features.
-- Examine target class distribution.
-- Identify missing and unknown values.
-- Visualize important relationships.
+- Inspect dataset structure, data types, and missing values.
+- Analyze the distribution of `is_canceled`.
+- Examine booking patterns by hotel type, lead time, market segment, deposit type, and customer history.
+- Identify outliers and high-cardinality categorical features.
 
 ### Stage 2: Data Preprocessing
 
-- Handle missing and unknown values.
-- Encode categorical features.
-- Scale numerical features.
-- Split data into training, validation, and testing sets.
-- Build a preprocessing pipeline to prevent data leakage.
+- Remove `reservation_status` and `reservation_status_date` before modeling.
+- Handle missing values and inconsistent categories.
+- Encode categorical features and scale numerical features.
+- Split data into training, validation, and test sets.
+- Build preprocessing steps that are fitted only on the training data.
 
 ### Stage 3: Baseline Models
 
-The Neural Network models will be compared against simple baseline approaches:
+Neural-network models will be compared with simple baselines:
 
-- Majority Class Classifier.
-- Logistic Regression.
+- Majority-class classifier.
+- Logistic regression.
 
-### Stage 4: Neural Network Development
+### Stage 4: Neural-Network Development
 
-At least three Neural Network models will be developed:
+At least three neural-network models will be developed:
 
-1. Shallow Multi-Layer Perceptron (MLP).
+1. Shallow multi-layer perceptron (MLP).
 2. Deeper MLP with regularization.
 3. Best-performing MLP after hyperparameter tuning.
 
 ### Stage 5: Model Experimentation
 
-- Compare SGD, SGD with Momentum, and Adam optimizers.
-- Experiment with different learning rates.
-- Apply Dropout and Early Stopping.
-- Test different network architectures.
-- Perform ablation studies to understand the contribution of different components.
+- Compare SGD, SGD with momentum, and Adam optimizers.
+- Experiment with learning rates, batch sizes, and architectures.
+- Apply dropout, early stopping, and other regularization techniques.
+- Conduct ablation studies to measure the contribution of key components.
 
 ### Stage 6: Model Evaluation
 
-Evaluate the models using multiple classification metrics and compare their performance.
+Evaluate all models on the same held-out test set and analyze common error patterns.
 
 ### Stage 7: Inference and Deployment
 
-Create a prediction pipeline that accepts new customer information and returns a predicted subscription class.
+Create a prediction pipeline that accepts a new booking record and returns a cancellation prediction and probability.
 
 ---
 
 ## 7. Evaluation Metrics
 
-Because the dataset contains imbalanced target classes, accuracy alone may not provide a complete picture of model performance.
+Since cancellation and non-cancellation classes may be imbalanced, accuracy alone is insufficient.
 
 ### Primary Evaluation Metric
 
-**F1-score for the positive class (`yes`).**
+**F1-score for the canceled class (`is_canceled = 1`).**
 
-F1-score balances Precision and Recall and helps evaluate how effectively the model identifies customers who actually subscribe.
+F1-score balances precision and recall, helping assess how effectively the model identifies bookings that are likely to be canceled.
 
 ### Additional Evaluation Metrics
 
 - Accuracy
 - Precision
 - Recall
-- Macro-F1 Score
+- Macro F1-score
 - ROC-AUC
-- Confusion Matrix
-
-All final models will be evaluated using the same test set for a fair comparison.
+- Confusion matrix
 
 ---
 
-## 8. Team Members and Responsibilities
+## 8. Week 10: EDA, Preprocessing, and Baselines
 
-The project team consists of five members:
+Week 10 is complete. The hotel EDA is available in `notebooks/01_eda.ipynb` and includes data-quality checks, class-balance analysis, distributions, IQR outlier flags, correlations, cancellation-rate comparisons, and a feature-availability audit.
+
+### Leakage-Free Preprocessing
+
+`src/data.py` implements the reusable data workflow:
+
+- Separates `is_canceled` from model features.
+- Always excludes `reservation_status` and `reservation_status_date`.
+- Conservatively excludes `assigned_room_type`, `booking_changes`, `days_in_waiting_list`, `required_car_parking_spaces`, and `total_of_special_requests` for a booking-creation prediction setting.
+- Imputes numerical features with the training-set median, then standardizes them.
+- Imputes categorical features with `__MISSING__` and one-hot encodes them with unknown-category protection.
+- Treats `agent` and `company` as categorical identifiers rather than continuous values.
+- Creates stratified 70% / 15% / 15% train, validation, and test splits. The test set is not used for model selection.
+
+### Validation Baselines
+
+Both models were fitted on the training split and evaluated on the same validation split (17,908 rows; 6,633 canceled bookings). F1-score for `is_canceled = 1` is the primary metric.
+
+| Model | Accuracy | Precision | Recall | F1 (canceled) | Macro F1 | ROC-AUC |
+|---|---:|---:|---:|---:|---:|---:|
+| Majority class (`DummyClassifier`) | 0.6296 | 0.0000 | 0.0000 | 0.0000 | 0.3864 | 0.5000 |
+| Logistic Regression (`class_weight="balanced"`) | 0.7911 | 0.7030 | 0.7550 | 0.7281 | 0.7792 | 0.8814 |
+
+Logistic Regression substantially improves on the majority baseline for the canceled class. Full classification reports and confusion matrices are saved in `experiments/baseline_report.md`; machine-readable results are in `experiments/baseline_results.csv` and `experiments/baseline_details.json`.
+
+### Reproduction
+
+1. Download the Kaggle CSV to `data/raw/hotel_bookings.csv` as described in `data/README.md`.
+2. Install dependencies with `pip install -r requirements.txt`.
+3. Run `python -m src.baselines --data data/raw/hotel_bookings.csv --output-dir experiments`.
+
+---
+
+## 9. Team Members and Responsibilities
 
 | No. | Team Member | Role | Main Responsibilities |
 |---|---|---|---|
 | 1 | Yousif Emad Hassan | Tech Lead + EDA & Baselines | Project coordination, repository management, EDA, and baseline models |
 | 2 | Judy Mohammed | Data Engineer | Data cleaning, preprocessing, encoding, and scaling |
-| 3 | Ahmed Walid | Model Architect | Neural Network architecture design and implementation |
+| 3 | Ahmed Walid | Model Architect | Neural-network architecture design and implementation |
 | 4 | Sara Saeed | Experimentation Engineer | Hyperparameter tuning, optimizer comparison, and ablation studies |
 | 5 | Nadine Mohamed | Evaluation & Deployment Engineer | Model evaluation, error analysis, and inference pipeline |
 
-All team members will contribute to Neural Network experimentation, documentation, and GitHub collaboration.
+All team members will contribute to neural-network experimentation, documentation, and GitHub collaboration.
 
 ---
 
-## 9. Project Structure
-
-The repository is organized as follows:
+## 10. Project Structure
 
 ```text
-Bank-Marketing-NN/
-│
+Hotel-Booking-Cancellation-NN/
 ├── README.md
 ├── requirements.txt
-│
+├── app/
 ├── configs/
-│
 ├── data/
 │   └── README.md
-│
+├── experiments/
+│   ├── baseline_results.csv
+│   ├── baseline_details.json
+│   └── baseline_report.md
+├── models/
 ├── notebooks/
 │   ├── 01_eda.ipynb
-│   └── 02_results.ipynb
-│
-├── src/
-│   ├── data.py
-│   ├── models.py
-│   ├── train.py
-│   ├── evaluate.py
-│   └── predict.py
-│
-├── experiments/
-│
-├── models/
-│
-├── app/
-│
-└── report/
+│   └── legacy/
+│       ├── README.md
+│       └── bank_marketing_eda.ipynb  # archived; not part of the active project
+├── report/
+└── src/
+    ├── data.py
+    └── baselines.py
 ```
 
----
-
-## 10. Expected Outcomes
-
-By the end of this project, we expect to:
-
-- Develop multiple Neural Network models for bank marketing prediction.
-- Compare Neural Networks against traditional baseline models.
-- Identify the most effective model architecture and training configuration.
-- Understand the effects of preprocessing, regularization, and optimization techniques.
-- Evaluate the model's ability to identify potential term deposit subscribers.
-- Deliver a reproducible prediction pipeline.
+The active project uses `notebooks/01_eda.ipynb`. The prior Bank Marketing EDA is retained only as an archived reference under `notebooks/legacy/`.
 
 ---
 
-## 11. References
+## 11. Expected Outcomes
 
-1. Moro, S., Cortez, P., & Rita, P. (2014). A Data-Driven Approach to Predict the Success of Bank Telemarketing. Decision Support Systems.
-2. UCI Machine Learning Repository – Bank Marketing Dataset: https://archive.ics.uci.edu/dataset/222/bank+marketing
-3. TensorFlow Documentation: https://www.tensorflow.org/
-4. Scikit-learn Documentation: https://scikit-learn.org/
+- Develop multiple neural-network models for hotel-booking cancellation prediction.
+- Compare neural networks with traditional baseline models.
+- Identify effective preprocessing, architecture, and training choices.
+- Measure the impact of regularization and optimization techniques.
+- Deliver a reproducible pipeline for predicting booking cancellations.
 
 ---
 
-## 12. Project Status
+## 12. References
 
-**Current Phase:** Week 9 – Project Planning
+1. [Hotel Booking Demand dataset on Kaggle](https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand/data)
+2. Antonio, N., de Almeida, A., & Nunes, L. (2019). Hotel booking demand datasets. *Data in Brief, 22*, 41–49.
+3. [TensorFlow Documentation](https://www.tensorflow.org/)
+4. [Scikit-learn Documentation](https://scikit-learn.org/)
 
-Completed planning activities:
+---
 
-- [Done] Project topic selected.
-- [Done] Dataset selected.
-- [Done] Problem statement defined.
-- [Done] Team roles assigned.
-- [Done] GitHub repository created.
+## 13. Project Status
+
+**Current Phase:** Week 10 - Baselines Ready
+
+Completed activities:
+
+- [x] Project topic selected.
+- [x] Dataset selected.
+- [x] Problem statement defined.
+- [x] Team roles assigned.
+- [x] GitHub repository created.
+- [x] Hotel booking EDA completed.
+- [x] Leakage-free preprocessing pipeline implemented.
+- [x] Majority-class and Logistic Regression baselines evaluated on validation data.
 
 Upcoming activities:
 
-- [ ] Exploratory Data Analysis (EDA).
-- [ ] Data preprocessing.
-- [ ] Baseline model implementation.
-- [ ] Neural Network development.
+- [ ] Neural-network development.
 - [ ] Model experimentation and evaluation.
 - [ ] Final report and presentation.
 
@@ -289,4 +292,4 @@ Upcoming activities:
 
 **Course:** AIE231 – Neural Networks  
 **University:** Alamein International University (AIU)  
-**Project:** Bank Marketing Subscription Prediction Using Neural Networks
+**Project:** Hotel Booking Cancellation Prediction Using Neural Networks

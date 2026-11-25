@@ -1,0 +1,6 @@
+# Raw datasets are downloaded locally and are not committed to Git.
+data/raw/
+data/*.zip
+
+# Notebook checkpoints
+.ipynb_checkpoints/

@@ -4,3 +4,7 @@ data/*.zip
 
 # Notebook checkpoints
 .ipynb_checkpoints/
+
+# Python bytecode generated during local verification
+__pycache__/
+*.py[cod]

@@ -235,12 +235,16 @@ Hotel-Booking-Cancellation-NN/
 ├── models/
 ├── notebooks/
 │   ├── 01_eda.ipynb
-│   └── 01_eda.ipynb.ipynb  # preserved Bank Marketing EDA
+│   └── legacy/
+│       ├── README.md
+│       └── bank_marketing_eda.ipynb  # archived; not part of the active project
 ├── report/
 └── src/
     ├── data.py
     └── baselines.py
 ```
+
+The active project uses `notebooks/01_eda.ipynb`. The prior Bank Marketing EDA is retained only as an archived reference under `notebooks/legacy/`.
 
 ---
 
